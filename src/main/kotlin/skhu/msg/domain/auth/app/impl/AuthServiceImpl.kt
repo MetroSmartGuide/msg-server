@@ -10,27 +10,20 @@ import skhu.msg.domain.member.entity.Member
 import skhu.msg.global.jwt.TokenProvider
 
 @Service
-class AuthServiceImpl (
+class AuthServiceImpl(
     private val memberRepository: MemberRepository,
     private val tokenProvider: TokenProvider,
 ): AuthService {
 
     @Transactional
     override fun joinOrLogin(requestLogin: RequestLogin): ResponseToken {
-        val memberEmail = requestLogin.email
-        val memberNickname = requestLogin.nickname
-        val memberUid = requestLogin.uid
-
-        if (!memberRepository.existsByEmail(memberEmail)) {
-            memberRepository.save(
-                Member.create(
-                    email = memberEmail,
-                    nickname = memberNickname,
-                    uid = memberUid,
-                ))
+        with(requestLogin) {
+            if (!memberRepository.existsByEmail(email)) {
+                val newMember = Member.create(email, nickname, uid)
+                memberRepository.save(newMember)
+            }
+            return tokenProvider.createToken(email)
         }
-
-        return tokenProvider.createToken(memberEmail)
     }
 
 }

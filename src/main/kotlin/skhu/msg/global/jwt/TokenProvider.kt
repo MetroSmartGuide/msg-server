@@ -6,7 +6,6 @@ import io.jsonwebtoken.Jwts
 import io.jsonwebtoken.SignatureAlgorithm
 import io.jsonwebtoken.io.Decoders
 import io.jsonwebtoken.security.Keys
-import io.jsonwebtoken.security.SecurityException
 import jakarta.servlet.http.HttpServletRequest
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
@@ -19,7 +18,6 @@ import org.springframework.util.StringUtils
 import skhu.msg.domain.auth.dto.response.ResponseToken
 import java.security.Key
 import java.util.*
-import java.util.stream.Collectors
 
 @Component
 class TokenProvider(
@@ -48,21 +46,19 @@ class TokenProvider(
             .signWith(key, SignatureAlgorithm.HS256)
             .compact()
 
-        return ResponseToken(accessToken)
+        return ResponseToken.create(accessToken)
     }
 
     fun getAuthentication(accessToken: String): UsernamePasswordAuthenticationToken {
         val claims = parseClaims(accessToken)
 
-        if (claims["role"] == null) {
+        val role: Any? = claims["role"]
+        if (role !is String) {
             throw RuntimeException("권한 정보가 없는 토큰입니다.")
         }
 
-        val authorities: Collection<GrantedAuthority?> =
-            Arrays.stream(claims["role"].toString().split(",".toRegex()).dropLastWhile { it.isEmpty() }
-                .toTypedArray())
-                .map { SimpleGrantedAuthority(it) }
-                .collect(Collectors.toList())
+        val authorities: List<GrantedAuthority> = role.split(",")
+            .map { SimpleGrantedAuthority(it) }
 
         val principal: UserDetails = User(claims.subject, "", authorities)
 
@@ -78,13 +74,14 @@ class TokenProvider(
     }
 
     fun validateToken(token: String?): Boolean {
-        try {
-            Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token)
-            return true
-        } catch (e: SecurityException) {
-            print(e.message)
+        return try {
+            token?.let {
+                Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(it)
+                true
+            } ?: false
+        } catch (e: Exception) {
+            false
         }
-        return false
     }
 
     private fun parseClaims(accessToken: String): Claims {
