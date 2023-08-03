@@ -6,6 +6,7 @@ COPY src/ /app/src/
 COPY build.gradle.kts /app/build.gradle.kts
 COPY settings.gradle.kts /app/settings.gradle.kts
 
+RUN chmod +x gradlew
 RUN ./gradlew clean build -x test
 
 FROM openjdk:17
