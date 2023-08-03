@@ -1,16 +1,3 @@
-FROM openjdk:17 AS builder
-
-WORKDIR /app
-
-COPY src/ /app/src/
-COPY gradlew /app/
-COPY gradle/ /app/gradle/
-COPY build.gradle.kts /app/build.gradle.kts
-COPY settings.gradle.kts /app/settings.gradle.kts
-
-RUN chmod +x gradlew
-RUN ./gradlew clean build -x test
-
 FROM openjdk:17
 
 ARG DB_HOST
@@ -37,7 +24,7 @@ ENV SK_API_KEY=${SK_API_KEY}
 
 WORKDIR /app
 
-COPY --from=builder /app/build/libs/*.jar msg-0.0.1.jar
+COPY build/libs/*.jar msg-0.0.1.jar
 
 COPY wait-for-it.sh /wait-for-it.sh
 RUN chmod +x /wait-for-it.sh
