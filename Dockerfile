@@ -3,6 +3,8 @@ FROM openjdk:17 AS builder
 WORKDIR /app
 
 COPY src/ /app/src/
+COPY gradlew /app/
+COPY gradle/ /app/gradle/
 COPY build.gradle.kts /app/build.gradle.kts
 COPY settings.gradle.kts /app/settings.gradle.kts
 
