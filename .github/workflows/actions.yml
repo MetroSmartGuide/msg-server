@@ -30,7 +30,7 @@ jobs:
 
     - name: Check if merge push
       if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-      run: echo "Merge push event. Continue with Docker image building and pushing."
+      run: echo "Merge push event."
 
     - name: Set up QEMU
       if: github.event_name == 'push' && github.ref == 'refs/heads/main'
