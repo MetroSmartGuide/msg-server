@@ -27,7 +27,7 @@ class SecurityConfig (
             .logout { logout -> logout.disable() }
             .authorizeHttpRequests { authorizeRequests ->
                 authorizeRequests
-                    .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/api-docs/**").permitAll()
+                    .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/api-docs/**", "/api/v1/auth/**").permitAll()
                     .anyRequest().authenticated()
             }
             .cors { cors -> cors.configurationSource(configurationSource()) }
