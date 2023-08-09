@@ -1,33 +1,27 @@
 package skhu.msg.domain.member.dto.response
 
 data class ResponseMemberPreferences(
-    var email: String? = null,
-    var nickname: String? = null,
-    var exit: Int? = null,
-    var cooling: Int? = null,
-    var seat: Int? = null,
+    var email: String,
+    var nickname: String,
+    var exit: Int,
+    var cooling: Int,
+    var seat: Int,
 ) {
 
     companion object {
         fun create(
-            email: String? = null,
-            nickname: String? = null,
-            exit: Int? = null,
-            cooling: Int? = null,
-            seat: Int? = null,
-        ): ResponseMemberPreferences {
-            if (email == null || nickname == null || exit == null || cooling == null || seat == null) {
-                throw IllegalArgumentException("ResponseMemberPreferences.of: arguments must not be null")
-            }
-
-            return ResponseMemberPreferences(
+            email: String,
+            nickname: String,
+            exit: Int,
+            cooling: Int,
+            seat: Int,
+        ) = ResponseMemberPreferences(
                 email = email,
                 nickname = nickname,
                 exit = exit,
                 cooling = cooling,
                 seat = seat,
             )
-        }
     }
 
 }
