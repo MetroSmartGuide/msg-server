@@ -14,22 +14,14 @@ class Member(
 
     companion object {
         fun create(
-            id: String? = null,
             email: String,
             nickname: String? = null,
             uid: String? = null,
-        ): Member {
-            if (id == null) {
-                throw IllegalArgumentException("Member.of: arguments must not be null")
-            }
-
-            return Member(
-                id = id,
-                email = email,
-                nickname = nickname,
-                uid = uid,
-            )
-        }
+        ): Member = Member(
+            email = email,
+            nickname = nickname,
+            uid = uid,
+        )
     }
 
 }
