@@ -34,7 +34,7 @@ class TokenProvider(
         this.accessTokenValidityTime = accessTokenValidityTime
     }
 
-    fun createToken(email: String?): ResponseToken {
+    fun createToken(email: String): ResponseToken {
         val now = Date()
         val tokenExpiredTime = Date(now.time + accessTokenValidityTime)
 
