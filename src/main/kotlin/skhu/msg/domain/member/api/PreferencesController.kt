@@ -1,6 +1,7 @@
 package skhu.msg.domain.member.api
 
 import io.swagger.v3.oas.annotations.tags.Tag
+import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
@@ -19,8 +20,10 @@ class PreferencesController(
 ) {
 
     @PostMapping("/set")
-    fun setUpPreferences(@RequestBody requestUpdatePreferences: RequestUpdatePreferences) {
-        preferencesService.setUpPreferences(requestUpdatePreferences)
+    fun setUpPreferences(
+        principal: Principal, @RequestBody requestUpdatePreferences: RequestUpdatePreferences): ResponseEntity<String> {
+        preferencesService.setUpPreferences(principal, requestUpdatePreferences)
+        return ResponseEntity.ok("선호도 설정이 완료되었습니다.")
     }
 
     @GetMapping("/get")

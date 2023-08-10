@@ -6,7 +6,7 @@ import java.security.Principal
 
 interface PreferencesService {
 
-    fun setUpPreferences(requestUpdatePreferences: RequestUpdatePreferences)
+    fun setUpPreferences(principal: Principal, requestUpdatePreferences: RequestUpdatePreferences)
 
     fun getPreferences(principal: Principal): ResponseMemberPreferences
 
