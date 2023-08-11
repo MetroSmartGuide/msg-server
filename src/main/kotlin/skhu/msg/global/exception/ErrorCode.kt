@@ -18,6 +18,10 @@ enum class ErrorCode(
     INVALID_TRAIN_NO_INPUT(HttpStatus.BAD_REQUEST, "지하철 차량 번호 입력이 올바르지 않습니다."),
     INVALID_STATION_NAME_INPUT(HttpStatus.BAD_REQUEST, "지하철역 이름 입력이 올바르지 않습니다."),
     INVALID_LOGIN_INPUT(HttpStatus.BAD_REQUEST, "로그인 정보가 올바르지 않습니다."),
+    INVALID_CONGESTION_TYPE(HttpStatus.BAD_REQUEST, "혼잡도 타입 값이 올바르지 않습니다."),
+    INVALID_CONGESTION_CAR(HttpStatus.BAD_REQUEST, "혼잡도 정보가 올바르지 않습니다."),
+    INVALID_WEAK_COOLING_CAR(HttpStatus.BAD_REQUEST, "약냉방 차량 정보가 올바르지 않습니다."),
+    INVALID_RECOMMEND_CAR(HttpStatus.BAD_REQUEST, "추천 차량 값이 올바르지 않습니다."),
 
     // 404 - Not Found
     NOT_FOUND_STATION(HttpStatus.NOT_FOUND, "지하철역을 찾을 수 없습니다."),
