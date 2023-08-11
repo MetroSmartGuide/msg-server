@@ -17,15 +17,15 @@ class Preferences(
 
     companion object {
         fun create (
-            fastExitScore: String,
-            exitScore: Int? = null,
+            memberEmail: String,
+            fastExitScore: Int? = null,
             coolingCarScore: Int? = null,
             gettingSeatScore: Int? = null,
         ): Preferences {
 
             return Preferences(
-                memberEmail = fastExitScore,
-                fastExitScore = exitScore,
+                memberEmail = memberEmail,
+                fastExitScore = fastExitScore,
                 coolingCarScore = coolingCarScore,
                 gettingSeatScore = gettingSeatScore,
             )

@@ -20,8 +20,8 @@ class PreferencesServiceImpl(
 ): PreferencesService {
 
     @Transactional
-    override fun setUpPreferences(requestUpdatePreferences: RequestUpdatePreferences) {
-        val memberEmail = requestUpdatePreferences.email
+    override fun setUpPreferences(principal: Principal, requestUpdatePreferences: RequestUpdatePreferences) {
+        val memberEmail = principal.name
         val newFastExitScore = requestUpdatePreferences.fastExitScore
         val newCoolingCarScore = requestUpdatePreferences.coolingCarScore
         val newGettingSeatScore = requestUpdatePreferences.gettingSeatScore
@@ -29,8 +29,8 @@ class PreferencesServiceImpl(
         val preferences = preferencesRepository.findByMemberEmail(memberEmail)
             ?: run {
                 val newPreferences = Preferences.create(
-                    fastExitScore = memberEmail,
-                    exitScore = newFastExitScore,
+                    memberEmail = memberEmail,
+                    fastExitScore = newFastExitScore,
                     coolingCarScore = newCoolingCarScore,
                     gettingSeatScore = newGettingSeatScore
                 )
@@ -40,6 +40,7 @@ class PreferencesServiceImpl(
         preferences.updateExitScore(newFastExitScore)
         preferences.updateCoolingScore(newCoolingCarScore)
         preferences.updateSeatScore(newGettingSeatScore)
+        preferencesRepository.save(preferences)
     }
 
     @Transactional(readOnly = true)
