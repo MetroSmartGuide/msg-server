@@ -21,9 +21,9 @@ class ExceptionHandler {
 
     @ExceptionHandler(MethodArgumentNotValidException::class)
     fun handleValidationException(ex: MethodArgumentNotValidException): ResponseException {
-        val errorReason= ex.bindingResult.fieldError?.field ?: ""
+        val errorReason= ex.bindingResult.fieldError?.defaultMessage
         val errorMessage = ErrorCode.INVALID_REQUEST_INPUT.message
-        val customErrorMessage = "$errorMessage / $errorReason"
+        val customErrorMessage = "$errorMessage - $errorReason"
 
         return ResponseException.create(
             statusCode = 400,

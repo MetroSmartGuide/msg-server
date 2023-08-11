@@ -1,6 +1,7 @@
 package skhu.msg.domain.auth.api
 
 import io.swagger.v3.oas.annotations.tags.Tag
+import jakarta.validation.Valid
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
@@ -17,7 +18,7 @@ class AuthController(
 ) {
 
     @PostMapping("/login")
-    fun joinOrLogin(@RequestBody requestLogin: RequestLogin): ResponseToken {
+    fun joinOrLogin(@RequestBody @Valid requestLogin: RequestLogin): ResponseToken {
         return authService.joinOrLogin(requestLogin)
     }
 
