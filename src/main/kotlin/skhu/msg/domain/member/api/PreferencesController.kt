@@ -1,6 +1,7 @@
 package skhu.msg.domain.member.api
 
 import io.swagger.v3.oas.annotations.tags.Tag
+import jakarta.validation.Valid
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
@@ -19,7 +20,7 @@ class PreferencesController(
 ) {
 
     @PostMapping("/set")
-    fun setUpPreferences(@RequestBody requestUpdatePreferences: RequestUpdatePreferences) {
+    fun setUpPreferences(@RequestBody @Valid requestUpdatePreferences: RequestUpdatePreferences) {
         preferencesService.setUpPreferences(requestUpdatePreferences)
     }
 
