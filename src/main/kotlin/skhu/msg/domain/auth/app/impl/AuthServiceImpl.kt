@@ -21,11 +21,11 @@ class AuthServiceImpl(
     override fun joinOrLogin(requestLogin: RequestLogin): ResponseToken {
         return try {
             with(requestLogin) {
-                if (!memberRepository.existsByEmail(email)) {
-                    val newMember = Member.create(email, nickname, uid)
+                if (!memberRepository.existsByEmail(email!!)) {
+                    val newMember = Member.create(email!!, nickname, uid)
                     memberRepository.save(newMember)
                 }
-                tokenProvider.createToken(email)
+                tokenProvider.createToken(email!!)
             }
         } catch (ex: Exception) {
             throw GlobalException(ErrorCode.INVALID_LOGIN_INPUT)
