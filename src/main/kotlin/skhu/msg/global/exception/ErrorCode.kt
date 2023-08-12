@@ -22,6 +22,7 @@ enum class ErrorCode(
     INVALID_CONGESTION_CAR(HttpStatus.BAD_REQUEST, "혼잡도 정보가 올바르지 않습니다."),
     INVALID_WEAK_COOLING_CAR(HttpStatus.BAD_REQUEST, "약냉방 차량 정보가 올바르지 않습니다."),
     INVALID_RECOMMEND_CAR(HttpStatus.BAD_REQUEST, "추천 차량 값이 올바르지 않습니다."),
+    INVALID_JWT(HttpStatus.BAD_REQUEST, "토큰 값이 비어있거나 올바르지 않습니다."),
 
     // 404 - Not Found
     NOT_FOUND_STATION(HttpStatus.NOT_FOUND, "지하철역을 찾을 수 없습니다."),

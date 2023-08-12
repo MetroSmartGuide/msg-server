@@ -20,7 +20,8 @@ class PreferencesServiceImpl(
 ): PreferencesService {
 
     @Transactional
-    override fun setUpPreferences(principal: Principal, requestUpdatePreferences: RequestUpdatePreferences) {
+    override fun setUpPreferences(principal: Principal?, requestUpdatePreferences: RequestUpdatePreferences) {
+        principal ?: throw GlobalException(ErrorCode.INVALID_JWT)
         val memberEmail = principal.name
         val newFastExitScore = requestUpdatePreferences.fastExitScore!!
         val newCoolingCarScore = requestUpdatePreferences.coolingCarScore!!
@@ -44,7 +45,8 @@ class PreferencesServiceImpl(
     }
 
     @Transactional(readOnly = true)
-    override fun getPreferences(principal: Principal): ResponseMemberPreferences {
+    override fun getPreferences(principal: Principal?): ResponseMemberPreferences {
+        principal ?: throw GlobalException(ErrorCode.INVALID_JWT)
         val memberEmail = principal.name
         val member = getMemberByEmail(memberEmail)
         val preferences = getPreferencesByEmail(memberEmail)

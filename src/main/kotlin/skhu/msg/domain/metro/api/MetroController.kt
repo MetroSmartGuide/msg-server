@@ -33,7 +33,7 @@ class MetroController(
     }
 
     @GetMapping("/recommend/{subwayLine}/{trainNo}")
-    fun getRecommendation(principal: Principal, @PathVariable subwayLine: String, @PathVariable trainNo: String): ResponseRecommendCar {
+    fun getRecommendation(principal: Principal?, @PathVariable subwayLine: String, @PathVariable trainNo: String): ResponseRecommendCar {
         return metroService.recommendCarBasedOnMemberPreferences(principal, subwayLine, trainNo)
     }
 

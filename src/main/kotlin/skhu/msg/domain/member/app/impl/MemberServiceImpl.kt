@@ -16,7 +16,8 @@ class MemberServiceImpl(
 ): MemberService {
 
     @Transactional(readOnly = true)
-    override fun getMyInfo(principal: Principal): ResponseMember {
+    override fun getMyInfo(principal: Principal?): ResponseMember {
+        principal ?: throw GlobalException(ErrorCode.INVALID_JWT)
         val memberEmail = principal.name
         val member = getMemberByEmail(memberEmail)
 
