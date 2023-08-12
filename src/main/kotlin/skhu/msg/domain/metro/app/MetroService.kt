@@ -14,6 +14,6 @@ interface MetroService {
 
     fun getShortestPathForStations(startStation: String, endStation: String): List<ResponseTransitPath>
 
-    fun recommendCarBasedOnMemberPreferences(principal: Principal, subwayLine: String, trainNo: String): ResponseRecommendCar
+    fun recommendCarBasedOnMemberPreferences(principal: Principal?, subwayLine: String, trainNo: String): ResponseRecommendCar
 
 }

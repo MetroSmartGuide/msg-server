@@ -21,13 +21,13 @@ class PreferencesController(
 ) {
 
     @PostMapping("/set")
-    fun setUpPreferences(principal: Principal, @RequestBody @Valid requestUpdatePreferences: RequestUpdatePreferences): ResponseEntity<String> {
+    fun setUpPreferences(principal: Principal?, @RequestBody @Valid requestUpdatePreferences: RequestUpdatePreferences): ResponseEntity<String> {
         preferencesService.setUpPreferences(principal, requestUpdatePreferences)
         return ResponseEntity.ok("선호도 설정이 완료되었습니다.")
     }
 
     @GetMapping("/get")
-    fun getPreferences(principal: Principal): ResponseMemberPreferences {
+    fun getPreferences(principal: Principal?): ResponseMemberPreferences {
         return preferencesService.getPreferences(principal)
     }
 

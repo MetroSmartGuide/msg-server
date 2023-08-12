@@ -14,7 +14,7 @@ class MemberController(
 ) {
 
     @GetMapping("/info")
-    fun getMyInfo(principal: Principal): ResponseMember {
+    fun getMyInfo(principal: Principal?): ResponseMember {
         return memberService.getMyInfo(principal)
     }
 

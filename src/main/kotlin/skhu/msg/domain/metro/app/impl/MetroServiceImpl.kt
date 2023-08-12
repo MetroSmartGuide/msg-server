@@ -60,7 +60,8 @@ class MetroServiceImpl(
     }
 
     @Transactional
-    override fun recommendCarBasedOnMemberPreferences(principal: Principal, subwayLine: String, trainNo: String): ResponseRecommendCar {
+    override fun recommendCarBasedOnMemberPreferences(principal: Principal?, subwayLine: String, trainNo: String): ResponseRecommendCar {
+        principal ?: throw GlobalException(ErrorCode.INVALID_JWT)
         val memberEmail = principal.name
         val memberPreferences = getPreferencesByEmail(memberEmail)
 
