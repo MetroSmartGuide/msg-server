@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import skhu.msg.domain.member.dao.PreferencesRepository
 import skhu.msg.domain.metro.app.MetroService
+import skhu.msg.domain.metro.data.FastTransfer
 import skhu.msg.domain.metro.data.SubwayStation
 import skhu.msg.domain.metro.data.WeakCoolingCar
 import skhu.msg.domain.metro.dto.response.*
@@ -56,7 +57,7 @@ class MetroServiceImpl(
 
         val jsonObject = getTransitPath(startStationCoordinate, endStationCoordinate)
 
-        return mapToResponseTransitPath(jsonObject)
+        return mapToResponseTransitPathAndAddFastTransferCar(jsonObject)
     }
 
     @Transactional
@@ -65,7 +66,6 @@ class MetroServiceImpl(
         val memberEmail = principal.name
         val memberPreferences = getPreferencesByEmail(memberEmail)
 
-        val memberExitScore = (memberPreferences.fastExitScore ?: 1.0).toDouble()
         val memberCoolingScore = (memberPreferences.coolingCarScore ?: 1.0).toDouble()
         val memberSeatScore = (memberPreferences.gettingSeatScore ?: 1.0).toDouble()
 
@@ -103,10 +103,6 @@ class MetroServiceImpl(
                 }
             }
         }
-
-        /**
-         *  TODO: 빠른 출구 및 빠른 환승에 대한 가중치 계산 추가 / 2023-08-12
-         */
 
         // 가중치가 가장 높은 인덱스 + 1 = 추천칸
         val recommendCar = recommendWeightList.indices.maxByOrNull { recommendWeightList[it] }?.plus(1) ?: 1
@@ -185,13 +181,12 @@ class MetroServiceImpl(
         }
     }
 
-    private fun mapToResponseCongestion(congestion: JSONObject): ResponseCongestion {
-        return ResponseCongestion.create(
+    private fun mapToResponseCongestion(congestion: JSONObject) =
+        ResponseCongestion.create(
             congestionTrain = congestion.getString("congestionTrain"),
             congestionCar = congestion.getString("congestionCar"),
             congestionType = congestion.getInt("congestionType")
         )
-    }
 
     /**
      *  getShortestPathForStations()에서 사용하는 메소드
@@ -230,32 +225,40 @@ class MetroServiceImpl(
         return JSONObject(json)
     }
 
-    private fun mapToResponseTransitPath(jsonObject: JSONObject): List<ResponseTransitPath> {
+    private fun mapToResponseTransitPathAndAddFastTransferCar(jsonObject: JSONObject): List<ResponseTransitPath> {
         val itemList = jsonObject.getJSONObject("msgBody").getJSONArray("itemList")
 
-        val responseTransitPath = mutableListOf<ResponseTransitPath>()
-
-        for (item in itemList) {
+        return itemList.map { item ->
             val pathObj = item as JSONObject
             val pathTime = pathObj.getString("time").toInt()
             val pathList = pathObj.getJSONArray("pathList")
-            val pathSegmentList = mutableListOf<PathSegment>()
 
-            for (path in pathList) {
-                val pathItem = path as JSONObject
-                val startName = pathItem.getString("fname")
-                val endName = pathItem.getString("tname")
-                val pathCount = pathItem.getJSONArray("railLinkList").length()
-                val subwayLine = pathItem.getString("routeNm")
+            val pathSegmentList = pathList.mapIndexed { i, pathItem ->
+                val pathItemObj = pathItem as JSONObject
+                val startName = pathItemObj.getString("fname")
+                val endName = pathItemObj.getString("tname")
+                val pathCount = pathItemObj.getJSONArray("railLinkList").length()
+                val subwayLine = pathItemObj.getString("routeNm")
 
-                pathSegmentList.add(PathSegment.create(subwayLine, startName, endName, pathCount))
-            }
+                val fastTransferCar = try {
+                    val nextPathItem = pathList.getJSONObject(i + 1)
+                    val nextPathSubwayLine = nextPathItem.getString("routeNm")
+
+                    getFastTransferCar(endName, subwayLine, nextPathSubwayLine)
+                } catch (e: Exception) {
+                    null
+                }
+
+                PathSegment.create(subwayLine, startName, endName, pathCount, fastTransferCar)
+            }.toMutableList()
+
             val transferCount = pathSegmentList.size - 1
-            responseTransitPath.add(ResponseTransitPath.create(pathTime, transferCount, pathSegmentList))
+            ResponseTransitPath.create(pathTime, transferCount, pathSegmentList)
         }
-
-        return responseTransitPath
     }
+
+    private fun getFastTransferCar(stationName: String, beforeSubwayLine: String, afterSubwayLine: String) =
+        FastTransfer.getFastTransferExitCar(stationName, beforeSubwayLine, afterSubwayLine)
 
     /**
      *  recommendCarBasedOnMemberPreferences()에서 사용하는 메소드
@@ -278,13 +281,12 @@ class MetroServiceImpl(
         checkNotNull(recommendCar) { throw GlobalException(ErrorCode.INVALID_RECOMMEND_CAR) }
     }
 
-    private fun mapToResponseRecommendCar(congestionType: Int, congestionCar: String, weekCoolingCar: List<Int>, recommendCar: Int): ResponseRecommendCar {
-        return ResponseRecommendCar.create(
+    private fun mapToResponseRecommendCar(congestionType: Int, congestionCar: String, weekCoolingCar: List<Int>, recommendCar: Int) =
+        ResponseRecommendCar.create(
             congestionType = congestionType,
             congestionCar = congestionCar,
             weekCoolingCar = weekCoolingCar.joinToString("|"),
             recommendCar = recommendCar
         )
-    }
 
 }

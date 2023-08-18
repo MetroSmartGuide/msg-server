@@ -32,6 +32,7 @@ enum class ErrorCode(
     NOT_FOUND_MEMBER(HttpStatus.NOT_FOUND, "회원 정보를 찾을 수 없습니다."),
     NOT_FOUND_PREFERENCES(HttpStatus.NOT_FOUND, "회원의 선호도 정보를 찾을 수 없습니다."),
     NOT_FOUND_SUBWAY_LINE(HttpStatus.NOT_FOUND, "지하철 노선을 찾을 수 없습니다."),
+    NOT_FOUND_FAST_TRANSFER_EXIT(HttpStatus.NOT_FOUND, "빠른 환승 출구를 찾을 수 없습니다."),
 
     // 500 - Internal Server Error
     INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "서버 내부 에러가 발생했습니다."),
