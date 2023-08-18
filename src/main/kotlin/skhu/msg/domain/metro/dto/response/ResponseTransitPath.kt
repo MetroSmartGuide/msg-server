@@ -26,6 +26,7 @@ data class PathSegment(
     val startName: String,
     val endName: String,
     val count: Int,
+    val fastTransferCar: Int? = null,
 ) {
 
     companion object {
@@ -34,11 +35,13 @@ data class PathSegment(
             startName: String,
             endName: String,
             count: Int,
+            fastTransferCar: Int? = null,
         ) = PathSegment(
             subwayLine = subwayLine,
             startName = startName,
             endName = endName,
             count = count,
+            fastTransferCar = fastTransferCar,
         )
     }
 
