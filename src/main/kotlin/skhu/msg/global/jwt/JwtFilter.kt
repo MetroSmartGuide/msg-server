@@ -16,10 +16,12 @@ class JwtFilter (
     override fun doFilter(request: ServletRequest, response: ServletResponse, chain: FilterChain) {
         val token = tokenProvider.resolveToken(request as HttpServletRequest)
 
-        if (StringUtils.hasText(token)) {
-            if (tokenProvider.validateToken(token)) {
-                val authentication: Authentication = tokenProvider.getAuthentication(token!!)
-                SecurityContextHolder.getContext().authentication = authentication
+        if (request.requestURI != "/api/v1/auth/refresh") {
+            if (StringUtils.hasText(token)) {
+                if (tokenProvider.validateToken(token!!)) {
+                    val authentication: Authentication = tokenProvider.getAuthentication(token!!)
+                    SecurityContextHolder.getContext().authentication = authentication
+                }
             }
         }
 

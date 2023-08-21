@@ -23,6 +23,10 @@ enum class ErrorCode(
     INVALID_WEAK_COOLING_CAR(HttpStatus.BAD_REQUEST, "약냉방 차량 정보가 올바르지 않습니다."),
     INVALID_RECOMMEND_CAR(HttpStatus.BAD_REQUEST, "추천 차량 값이 올바르지 않습니다."),
     INVALID_JWT(HttpStatus.BAD_REQUEST, "토큰 값이 비어있거나 올바르지 않습니다."),
+    INVALID_EMAIL(HttpStatus.BAD_REQUEST, "이메일 값이 올바르지 않습니다."),
+
+    // 403 - Forbidden
+    FORBIDDEN_TOKEN(HttpStatus.FORBIDDEN, "권한 정보가 없는 토큰입니다."),
 
     // 404 - Not Found
     NOT_FOUND_STATION(HttpStatus.NOT_FOUND, "지하철역을 찾을 수 없습니다."),
@@ -36,5 +40,8 @@ enum class ErrorCode(
 
     // 500 - Internal Server Error
     INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "서버 내부 에러가 발생했습니다."),
+    INTERNAL_SERVER_ERROR_REDIS(HttpStatus.INTERNAL_SERVER_ERROR, "서버 내부 에러가 발생했습니다. (Redis)"),
+    INTERNAL_SERVER_ERROR_JWT(HttpStatus.INTERNAL_SERVER_ERROR, "서버 내부 에러가 발생했습니다. (JWT)"),
+    INTERNAL_SERVER_ERROR_LOGIN(HttpStatus.INTERNAL_SERVER_ERROR, "서버 내부 에러가 발생했습니다. (로그인)"),
 
 }

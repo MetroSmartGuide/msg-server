@@ -9,13 +9,14 @@ import io.jsonwebtoken.security.Keys
 import jakarta.servlet.http.HttpServletRequest
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
-import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.core.userdetails.User
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.stereotype.Component
 import org.springframework.util.StringUtils
 import skhu.msg.domain.auth.dto.response.ResponseToken
+import skhu.msg.global.exception.ErrorCode
+import skhu.msg.global.exception.GlobalException
 import java.security.Key
 import java.util.*
 
@@ -23,46 +24,80 @@ import java.util.*
 class TokenProvider(
     @Value("\${jwt.secret}") secretKey: String?,
     @Value("\${jwt.access-token-validity-in-milliseconds}") accessTokenValidityTime: Long,
+    @Value("\${jwt.refresh-token-validity-in-milliseconds}") refreshTokenValidityTime: Long,
 ) {
 
-    private val key: Key
-    private val accessTokenValidityTime: Long
+    private final val key: Key
+    private final val accessTokenValidityTime: Long
+    private final val refreshTokenValidityTime: Long
 
     init {
         val keyBytes: ByteArray = Decoders.BASE64.decode(secretKey)
         key = Keys.hmacShaKeyFor(keyBytes)
         this.accessTokenValidityTime = accessTokenValidityTime
+        this.refreshTokenValidityTime = refreshTokenValidityTime
     }
 
     fun createToken(email: String): ResponseToken {
-        val now = Date()
-        val tokenExpiredTime = Date(now.time + accessTokenValidityTime)
+        return try {
+            val now = Date()
 
-        val accessToken = Jwts.builder()
-            .setSubject(email)
-            .claim("role", "ROLE_MEMBER")
-            .setIssuedAt(now)
-            .setExpiration(tokenExpiredTime)
-            .signWith(key, SignatureAlgorithm.HS256)
-            .compact()
+            val tokenExpiredTime = Date(now.time + accessTokenValidityTime)
+            val accessToken = Jwts.builder()
+                .setSubject(email)
+                .claim("role", "ROLE_MEMBER")
+                .setIssuedAt(now)
+                .setExpiration(tokenExpiredTime)
+                .signWith(key, SignatureAlgorithm.HS256)
+                .compact()
 
-        return ResponseToken.create(accessToken)
+            val refreshTokenExpiredTime = Date(now.time + refreshTokenValidityTime)
+            val refreshToken = Jwts.builder()
+                .setExpiration(refreshTokenExpiredTime)
+                .signWith(key, SignatureAlgorithm.HS256)
+                .compact()
+
+            ResponseToken.create(accessToken, refreshToken)
+        } catch (ex: Exception) {
+            throw GlobalException(ErrorCode.INTERNAL_SERVER_ERROR_JWT)
+        }
+    }
+
+    fun refreshAccessTokenByRefreshToken(request: HttpServletRequest, refreshToken: String): ResponseToken {
+        return try {
+            val accessToken = resolveToken(request) ?: throw GlobalException(ErrorCode.INVALID_JWT)
+            val now = Date()
+
+            val tokenExpiredTime = Date(now.time + accessTokenValidityTime)
+            val newAccessToken = Jwts.builder()
+                .setSubject(parseClaims(accessToken).subject)
+                .claim("role", "ROLE_MEMBER")
+                .setIssuedAt(now)
+                .setExpiration(tokenExpiredTime)
+                .signWith(key, SignatureAlgorithm.HS256)
+                .compact()
+
+            ResponseToken.create(newAccessToken, refreshToken)
+        } catch (ex: Exception) {
+            throw GlobalException(ErrorCode.INTERNAL_SERVER_ERROR_JWT)
+        }
     }
 
     fun getAuthentication(accessToken: String): UsernamePasswordAuthenticationToken {
-        val claims = parseClaims(accessToken)
+        return try {
+            val claims = parseClaims(accessToken)
 
-        val role: Any? = claims["role"]
-        if (role !is String) {
-            throw RuntimeException("권한 정보가 없는 토큰입니다.")
+            val role = claims["role"] as? String
+                ?: throw GlobalException(ErrorCode.FORBIDDEN_TOKEN)
+
+            val authorities = role.split(",").map { SimpleGrantedAuthority(it) }
+
+            val principal: UserDetails = User(claims.subject, "", authorities)
+
+            UsernamePasswordAuthenticationToken(principal, "", authorities)
+        } catch (ex: Exception) {
+            throw GlobalException(ErrorCode.FORBIDDEN_TOKEN)
         }
-
-        val authorities: List<GrantedAuthority> = role.split(",")
-            .map { SimpleGrantedAuthority(it) }
-
-        val principal: UserDetails = User(claims.subject, "", authorities)
-
-        return UsernamePasswordAuthenticationToken(principal, "", authorities)
     }
 
     fun resolveToken(request: HttpServletRequest): String? {
@@ -90,6 +125,12 @@ class TokenProvider(
         } catch (e: ExpiredJwtException) {
             e.claims
         }
+    }
+
+    fun getExpirationTime(token: String): Long {
+        val expirationTime = Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).body.expiration.time
+        val now = Date().time
+        return expirationTime - now
     }
 
 }
