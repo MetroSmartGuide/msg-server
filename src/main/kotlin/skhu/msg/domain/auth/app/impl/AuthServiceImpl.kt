@@ -19,7 +19,7 @@ import java.util.concurrent.TimeUnit
 class AuthServiceImpl(
     private val memberRepository: MemberRepository,
     private val tokenProvider: TokenProvider,
-    private val redisTemplate: RedisTemplate<String, Any>,
+    private val redisTemplate: RedisTemplate<Any, Any>,
 ): AuthService {
 
     @Transactional
@@ -29,16 +29,16 @@ class AuthServiceImpl(
 
             if (existMemberByEmail(email)) {
                 val responseToken = tokenProvider.createToken(email)
-                saveRefreshToken(responseToken.refreshToken)
+                storeRefreshTokenInRedis(responseToken.refreshToken)
                 responseToken
             } else {
                 val newMember = createNewMember(email, requestLogin.nickname, requestLogin.uid)
                 val responseToken = tokenProvider.createToken(newMember.email)
-                saveRefreshToken(responseToken.refreshToken)
+                storeRefreshTokenInRedis(responseToken.refreshToken)
                 responseToken
             }
         } catch (ex: Exception) {
-            throw GlobalException(ErrorCode.INTERNAL_SERVER_ERROR_LOGIN)
+            throw GlobalException(ErrorCode.LOGIN_FAILED)
         }
     }
 
@@ -50,7 +50,22 @@ class AuthServiceImpl(
 
             tokenProvider.refreshAccessTokenByRefreshToken(request, refreshToken)
         } catch (ex: Exception) {
-            throw GlobalException(ErrorCode.INVALID_JWT)
+            throw GlobalException(ErrorCode.REFRESH_TOKEN_FAILED)
+        }
+    }
+
+    override fun logout(request: HttpServletRequest, requestRefresh: RequestRefresh) {
+        try {
+            val accessToken = tokenProvider.resolveToken(request)!!
+            val refreshToken = requestRefresh.refreshToken!!
+
+            storeLoggedOutAccessTokenInRedis(accessToken)
+
+            validateRefreshToken(refreshToken)
+
+            redisTemplate.delete(refreshToken)
+        } catch (ex: Exception) {
+            throw GlobalException(ErrorCode.LOGOUT_FAILED)
         }
     }
 
@@ -59,7 +74,8 @@ class AuthServiceImpl(
 
     private fun createNewMember(email: String, nickname: String?, uid: String?): Member =
         memberRepository.save(Member.create(email, nickname, uid))
-    private fun saveRefreshToken(refreshToken: String) {
+
+    private fun storeRefreshTokenInRedis(refreshToken: String) {
         val expiration: Long = tokenProvider.getExpirationTime(refreshToken)
 
         redisTemplate.opsForValue()
@@ -69,6 +85,13 @@ class AuthServiceImpl(
     private fun validateRefreshToken(refreshToken: String) {
         redisTemplate.opsForValue().get(refreshToken)
             ?: throw GlobalException(ErrorCode.INVALID_JWT)
+    }
+
+    private fun storeLoggedOutAccessTokenInRedis(accessToken: String) {
+        val expiration: Long = tokenProvider.getExpirationTime(accessToken)
+
+        redisTemplate.opsForValue()
+            .set(accessToken, "loggedOutAccessToken", expiration, TimeUnit.MILLISECONDS)
     }
 
 }

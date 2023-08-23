@@ -42,6 +42,8 @@ enum class ErrorCode(
     INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "서버 내부 에러가 발생했습니다."),
     INTERNAL_SERVER_ERROR_REDIS(HttpStatus.INTERNAL_SERVER_ERROR, "서버 내부 에러가 발생했습니다. (Redis)"),
     INTERNAL_SERVER_ERROR_JWT(HttpStatus.INTERNAL_SERVER_ERROR, "서버 내부 에러가 발생했습니다. (JWT)"),
-    INTERNAL_SERVER_ERROR_LOGIN(HttpStatus.INTERNAL_SERVER_ERROR, "서버 내부 에러가 발생했습니다. (로그인)"),
+    LOGIN_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "로그인에 실패했습니다."),
+    LOGOUT_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "로그아웃에 실패했습니다."),
+    REFRESH_TOKEN_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "토큰 갱신에 실패했습니다."),
 
 }

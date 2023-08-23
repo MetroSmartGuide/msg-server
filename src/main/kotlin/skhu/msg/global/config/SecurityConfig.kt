@@ -2,6 +2,7 @@ package skhu.msg.global.config
 
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.data.redis.core.RedisTemplate
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
 import org.springframework.security.web.SecurityFilterChain
@@ -15,7 +16,8 @@ import skhu.msg.global.jwt.TokenProvider
 @Configuration
 @EnableWebSecurity
 class SecurityConfig (
-    private val tokenProvider: TokenProvider
+    private val tokenProvider: TokenProvider,
+    private val redisTemplate: RedisTemplate<Any, Any>,
 ) {
 
     @Bean
@@ -31,7 +33,7 @@ class SecurityConfig (
                     .anyRequest().authenticated()
             }
             .cors { cors -> cors.configurationSource(configurationSource()) }
-            .addFilterBefore(JwtFilter(tokenProvider), UsernamePasswordAuthenticationFilter::class.java)
+            .addFilterBefore(JwtFilter(tokenProvider, redisTemplate), UsernamePasswordAuthenticationFilter::class.java)
             .build()
 
     @Bean
