@@ -27,4 +27,8 @@ class AuthController(
     fun refreshAccessToken(request: HttpServletRequest, @RequestBody @Valid requestRefresh: RequestRefresh): ResponseToken =
          authService.refreshAccessToken(request, requestRefresh)
 
+    @PostMapping("/logout")
+    fun logout(request: HttpServletRequest, @RequestBody @Valid requestRefresh: RequestRefresh) =
+        authService.logout(request, requestRefresh)
+
 }
