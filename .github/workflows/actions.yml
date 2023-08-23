@@ -60,7 +60,10 @@ jobs:
           DB_PORT=${{ secrets.DB_PORT }}
           DB_URI=${{ secrets.DB_URI }}
           DB_NAME=${{ secrets.DB_NAME }}
+          REDIS_HOST=${{ secrets.REDIS_HOST }}
+          REDIS_PORT=${{ secrets.REDIS_PORT }}
           JWT_SECRET=${{ secrets.JWT_SECRET }}
           JWT_VALIDITY_TIME=${{ secrets.JWT_VALIDITY_TIME }}
+          JWT_REFRESH_VALIDITY_TIME=${{ secrets.JWT_REFRESH_VALIDITY_TIME }}
           SEOUL_API_KEY=${{ secrets.SEOUL_API_KEY }}
           SK_API_KEY=${{ secrets.SK_API_KEY }}
