@@ -27,12 +27,11 @@ class MemberServiceImpl(
     }
 
     @Transactional(readOnly = true)
-    override fun getMembers(): List<ResponseMember> {
-        return memberRepository.findAll().map {
-                member -> validateMember(member)
+    override fun getMembers(): List<ResponseMember> =
+        memberRepository.findAll().map {
+            member -> validateMember(member)
             mapToResponseMember(member)
         }
-    }
 
     private fun getMemberByEmail(memberEmail: String) =
         memberRepository.findByEmail(memberEmail)
