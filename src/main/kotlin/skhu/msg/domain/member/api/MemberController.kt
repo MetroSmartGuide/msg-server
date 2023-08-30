@@ -14,13 +14,11 @@ class MemberController(
 ) {
 
     @GetMapping("/info")
-    fun getMyInfo(principal: Principal?): ResponseMember {
-        return memberService.getMyInfo(principal)
-    }
+    fun getMyInfo(principal: Principal?): ResponseMember =
+        memberService.getMyInfo(principal)
 
     @GetMapping("/members")
-    fun getUsers(): List<ResponseMember> {
-        return memberService.getMembers()
-    }
+    fun getUsers(): List<ResponseMember> =
+        memberService.getMembers()
 
 }
