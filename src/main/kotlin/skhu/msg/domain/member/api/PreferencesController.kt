@@ -27,8 +27,7 @@ class PreferencesController(
     }
 
     @GetMapping("/get")
-    fun getPreferences(principal: Principal?): ResponseMemberPreferences {
-        return preferencesService.getPreferences(principal)
-    }
+    fun getPreferences(principal: Principal?): ResponseMemberPreferences =
+        preferencesService.getPreferences(principal)
 
 }
