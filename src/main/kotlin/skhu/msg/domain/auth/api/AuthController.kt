@@ -21,7 +21,7 @@ class AuthController(
 ) {
 
     @PostMapping("/login")
-    @Operation(summary = "로그인 또는 회원가입", description = "회원 정보를 사용해 로그인 또는 회원가입을 수행합니다.")
+    @Operation(summary = "로그인 또는 회원가입", description = "회원 정보를 사용해 이미 회원인 경우 로그인, 아닌 경우 회원가입 후 로그인을 수행합니다.")
     fun joinOrLogin(@RequestBody @Valid requestLogin: RequestLogin): ResponseToken =
         authService.joinOrLogin(requestLogin)
 
