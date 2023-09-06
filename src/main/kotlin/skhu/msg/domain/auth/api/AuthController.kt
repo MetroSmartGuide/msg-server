@@ -1,5 +1,6 @@
 package skhu.msg.domain.auth.api
 
+import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.tags.Tag
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.validation.Valid
@@ -20,14 +21,17 @@ class AuthController(
 ) {
 
     @PostMapping("/login")
+    @Operation(summary = "로그인 또는 회원가입", description = "회원 정보를 사용해 로그인 또는 회원가입을 수행합니다.")
     fun joinOrLogin(@RequestBody @Valid requestLogin: RequestLogin): ResponseToken =
         authService.joinOrLogin(requestLogin)
 
     @PostMapping("/refresh")
+    @Operation(summary = "액세스 토큰 갱신", description = "리프레시 토큰을 사용해 액세스 토큰을 갱신합니다.")
     fun refreshAccessToken(request: HttpServletRequest, @RequestBody @Valid requestRefresh: RequestRefresh): ResponseToken =
          authService.refreshAccessToken(request, requestRefresh)
 
     @PostMapping("/logout")
+    @Operation(summary = "로그아웃", description = "액세스 토큰을 사용하지 못하게 만들어 로그아웃 기능을 수행합니다.")
     fun logout(request: HttpServletRequest, @RequestBody @Valid requestRefresh: RequestRefresh) =
         authService.logout(request, requestRefresh)
 
