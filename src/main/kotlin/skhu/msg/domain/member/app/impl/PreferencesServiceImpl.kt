@@ -44,6 +44,36 @@ class PreferencesServiceImpl(
         preferencesRepository.save(preferences)
     }
 
+    @Transactional
+    override fun updateFastExitScore(principal: Principal?, fastExitScore: Int) {
+        principal ?: throw GlobalException(ErrorCode.INVALID_JWT)
+        val memberEmail = principal.name
+        val preferences = getPreferencesByEmail(memberEmail)
+
+        preferences.updateExitScore(fastExitScore)
+        preferencesRepository.save(preferences)
+    }
+
+    @Transactional
+    override fun updateCoolingCarScore(principal: Principal?, coolingCarScore: Int) {
+        principal ?: throw GlobalException(ErrorCode.INVALID_JWT)
+        val memberEmail = principal.name
+        val preferences = getPreferencesByEmail(memberEmail)
+
+        preferences.updateCoolingScore(coolingCarScore)
+        preferencesRepository.save(preferences)
+    }
+
+    @Transactional
+    override fun updateGettingSeatScore(principal: Principal?, gettingSeatScore: Int) {
+        principal ?: throw GlobalException(ErrorCode.INVALID_JWT)
+        val memberEmail = principal.name
+        val preferences = getPreferencesByEmail(memberEmail)
+
+        preferences.updateSeatScore(gettingSeatScore)
+        preferencesRepository.save(preferences)
+    }
+
     @Transactional(readOnly = true)
     override fun getPreferences(principal: Principal?): ResponseMemberPreferences {
         principal ?: throw GlobalException(ErrorCode.INVALID_JWT)
