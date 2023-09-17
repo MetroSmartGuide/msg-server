@@ -43,6 +43,7 @@ class AuthServiceImpl(
                 responseToken
             }
         } catch (ex: Exception) {
+            print(ex.message)
             throw GlobalException(ErrorCode.LOGIN_FAILED)
         }
     }

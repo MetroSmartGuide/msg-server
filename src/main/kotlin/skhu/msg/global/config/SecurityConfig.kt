@@ -30,7 +30,8 @@ class SecurityConfig (
             .authorizeHttpRequests { authorizeRequests ->
                 authorizeRequests
                     .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/api-docs/**", "/api/v1/auth/**").permitAll()
-                    .anyRequest().authenticated()
+                    .requestMatchers("/api/v1/member/**", "/api/v1/preferences/**", "/api/v1/metro/**").authenticated()
+                    .anyRequest().permitAll()
             }
             .cors { cors -> cors.configurationSource(configurationSource()) }
             .addFilterBefore(JwtFilter(tokenProvider, redisTemplate), UsernamePasswordAuthenticationFilter::class.java)

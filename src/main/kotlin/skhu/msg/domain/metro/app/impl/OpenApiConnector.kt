@@ -5,13 +5,13 @@ import okhttp3.Request
 import org.json.JSONObject
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.cache.annotation.Cacheable
-import org.springframework.stereotype.Service
+import org.springframework.stereotype.Component
 import skhu.msg.domain.metro.data.SubwayStation
 import skhu.msg.global.exception.ErrorCode
 import skhu.msg.global.exception.GlobalException
 import java.net.URLEncoder
 
-@Service
+@Component
 class OpenApiConnector(
     @Value("\${api.key.seoul}") private val SEOUL_API_KEY: String,
     @Value("\${api.key.sk}") private val SK_API_KEY: String,
