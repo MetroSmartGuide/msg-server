@@ -19,6 +19,4 @@ api:
     path: ${SUBWAY_PATH_API_KEY}
 logging:
   level:
-    root: INFO
-    org.springframework.web: INFO
-    org.hibernate: INFO
+    root: TRACE
