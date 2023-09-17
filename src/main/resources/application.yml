@@ -5,6 +5,8 @@ spring:
       port: ${DB_PORT}
       uri: ${DB_URI}
       database: ${DB_NAME}
+      username: ${DB_USERNAME}
+      password: ${DB_PASSWORD}
     redis:
       host: ${REDIS_HOST}
       port: ${REDIS_PORT}
@@ -19,4 +21,4 @@ api:
     path: ${SUBWAY_PATH_API_KEY}
 logging:
   level:
-    root: TRACE
+    root: DEBUG
