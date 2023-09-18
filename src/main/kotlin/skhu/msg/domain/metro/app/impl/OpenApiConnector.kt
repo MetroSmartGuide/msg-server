@@ -33,12 +33,12 @@ class OpenApiConnector(
             .build()
 
         val response = client.newCall(request).execute()
-        val json = response.body?.string() ?: throw RuntimeException("Response body is null")
+        val json = response.body?.string() ?: throw GlobalException(ErrorCode.INTERNAL_SERVER_ERROR)
 
         return try {
             JSONObject(json).getJSONObject("data").getJSONObject("congestionResult")
         } catch (e: Exception) {
-            throw GlobalException(ErrorCode.INTERNAL_SERVER_ERROR)
+            throw GlobalException(ErrorCode.NOT_FOUND_CONGESTION)
         }
     }
 
@@ -55,10 +55,10 @@ class OpenApiConnector(
             .build()
 
         val response = client.newCall(request).execute()
+        val json = response.body?.string() ?: throw GlobalException(ErrorCode.INTERNAL_SERVER_ERROR)
 
         return try {
-            val responseBody = response.body?.string()
-            JSONObject(responseBody)
+            JSONObject(json)
         } catch (e: Exception) {
             throw GlobalException(ErrorCode.NOT_FOUND_ARRIVAL_TRAIN)
         }
@@ -84,7 +84,11 @@ class OpenApiConnector(
         val response = client.newCall(request).execute()
         val json = response.body?.string() ?: throw GlobalException(ErrorCode.INTERNAL_SERVER_ERROR)
 
-        return JSONObject(json)
+        return try {
+            JSONObject(json)
+        } catch (e: Exception) {
+            throw GlobalException(ErrorCode.NOT_FOUND_TRANSIT_PATH)
+        }
     }
 
 }

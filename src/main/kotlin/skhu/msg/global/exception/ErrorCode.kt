@@ -30,6 +30,7 @@ enum class ErrorCode(
 
     // 404 - Not Found
     NOT_FOUND_STATION(HttpStatus.NOT_FOUND, "지하철역을 찾을 수 없습니다."),
+    NOT_FOUND_TRANSIT_PATH(HttpStatus.NOT_FOUND, "경로를 찾을 수 없습니다."),
     NOT_FOUND_CONGESTION(HttpStatus.NOT_FOUND, "혼잡도 정보를 찾을 수 없습니다."),
     NOT_FOUND_ARRIVAL_TRAIN(HttpStatus.NOT_FOUND, "도착 예정인 열차를 찾을 수 없습니다."),
     NOT_FOUND_SHORTEST_PATH(HttpStatus.NOT_FOUND, "최단 경로를 찾을 수 없습니다."),
