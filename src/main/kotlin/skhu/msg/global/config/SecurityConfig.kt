@@ -30,7 +30,6 @@ class SecurityConfig (
             .authorizeHttpRequests { authorizeRequests ->
                 authorizeRequests
                     .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/api-docs/**", "/api/v1/auth/**").permitAll()
-                    .requestMatchers("/api/v1/member/**", "/api/v1/preferences/**", "/api/v1/metro/**").anonymous()
                     .anyRequest().permitAll()
             }
             .cors { cors -> cors.configurationSource(configurationSource()) }
