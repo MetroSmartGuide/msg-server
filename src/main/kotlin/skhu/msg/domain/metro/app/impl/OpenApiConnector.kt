@@ -33,16 +33,22 @@ class OpenApiConnector(
                 set("appKey", SK_API_KEY)
             })
 
-        val response = restTemplate.exchange(url, HttpMethod.GET, httpEntity, String::class.java)
+        try {
+            val response = restTemplate.exchange(url, HttpMethod.GET, httpEntity, String::class.java)
 
-        print("\n\n\n\n\n\n\n\n\n\n\n\n$response\n\n\n\n\n\n\n\n\n\n\n\n")
+            print("\n\n\n\n\n\n\n\n\n\n\n\n$response\n\n\n\n\n\n\n\n\n\n\n\n")
 
-        if (!response.statusCode.is2xxSuccessful) {
+//        if (!response.statusCode.is2xxSuccessful) {
+//            throw GlobalException(ErrorCode.NOT_FOUND_CONGESTION)
+//        }
+
+            return JSONObject(response.body)
+                .getJSONObject("data").getJSONObject("congestionResult") ?: throw GlobalException(ErrorCode.NOT_FOUND_CONGESTION)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            print ("\n\n\n\n\n\n${e.message}\n\n\n\n\n\n")
             throw GlobalException(ErrorCode.NOT_FOUND_CONGESTION)
         }
-
-        return JSONObject(response.body)
-            .getJSONObject("data").getJSONObject("congestionResult") ?: throw GlobalException(ErrorCode.NOT_FOUND_CONGESTION)
     }
 
     fun getRealTimeArrivalTrains(stationName: String): JSONObject {
@@ -53,19 +59,27 @@ class OpenApiConnector(
         val httpEntity = HttpEntity<String>(
             HttpHeaders().apply {
                 set("accept", "application/json")
-                set("Content-Type", "application/x-www-form-urlencoded;charset=utf-8")
+                set("Content-Type", "application/json")
             })
 
-        val response = restTemplate.exchange(url, HttpMethod.GET, httpEntity, String::class.java)
+        try {
+            print("\n\n\n\n\n\n\n\n\n\n\n\n$url\n\n\n\n\n\n\n\n\n\n\n\n")
 
-        print("\n\n\n\n\n\n\n\n\n\n\n\n$response\n\n\n\n\n\n\n\n\n\n\n\n")
+            val response = restTemplate.exchange(url, HttpMethod.GET, httpEntity, String::class.java)
 
-        if (!response.statusCode.is2xxSuccessful) {
-            throw GlobalException(ErrorCode.INTERNAL_SERVER_ERROR)
+            print("\n\n\n\n\n\n\n\n\n\n\n\n$response\n\n\n\n\n\n\n\n\n\n\n\n")
+
+//        if (!response.statusCode.is2xxSuccessful) {
+//            throw GlobalException(ErrorCode.INTERNAL_SERVER_ERROR)
+//        }
+
+            val responseBody = response.body ?: throw GlobalException(ErrorCode.NOT_FOUND_ARRIVAL_TRAIN)
+            return JSONObject(responseBody)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            print ("\n\n\n\n\n\n${e.message}\n\n\n\n\n\n")
+            throw GlobalException(ErrorCode.NOT_FOUND_ARRIVAL_TRAIN)
         }
-
-        val responseBody = response.body ?: throw GlobalException(ErrorCode.NOT_FOUND_ARRIVAL_TRAIN)
-        return JSONObject(responseBody)
     }
 
     fun getTransitPath(startStationCoordinate: SubwayStation, endStationCoordinate: SubwayStation): JSONObject {
@@ -84,16 +98,24 @@ class OpenApiConnector(
                 set("Content-Type", "application/json")
             })
 
-        val response = restTemplate.exchange(accessUrl, HttpMethod.GET, httpEntity, String::class.java)
+        try {
+            print("\n\n\n\n\n\n\n\n\n\n\n\n$accessUrl\n\n\n\n\n\n\n\n\n\n\n\n")
 
-        print("\n\n\n\n\n\n\n\n\n\n\n\n$response\n\n\n\n\n\n\n\n\n\n\n\n")
+            val response = restTemplate.exchange(accessUrl, HttpMethod.GET, httpEntity, String::class.java)
 
-        if (!response.statusCode.is2xxSuccessful) {
-            throw GlobalException(ErrorCode.INTERNAL_SERVER_ERROR)
+            print("\n\n\n\n\n\n\n\n\n\n\n\n$response\n\n\n\n\n\n\n\n\n\n\n\n")
+
+//        if (!response.statusCode.is2xxSuccessful) {
+//            throw GlobalException(ErrorCode.INTERNAL_SERVER_ERROR)
+//        }
+
+            val responseBody = response.body ?: throw GlobalException(ErrorCode.NOT_FOUND_TRANSIT_PATH)
+            return JSONObject(responseBody)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            print ("\n\n\n\n\n\n${e.message}\n\n\n\n\n\n")
+            throw GlobalException(ErrorCode.NOT_FOUND_TRANSIT_PATH)
         }
-
-        val responseBody = response.body ?: throw GlobalException(ErrorCode.NOT_FOUND_TRANSIT_PATH)
-        return JSONObject(responseBody)
     }
 
 }
