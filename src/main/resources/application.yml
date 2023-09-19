@@ -17,6 +17,3 @@ api:
     seoul: ${SEOUL_API_KEY}
     sk: ${SK_API_KEY}
     path: ${SUBWAY_PATH_API_KEY}
-logging:
-  level:
-    root: DEBUG

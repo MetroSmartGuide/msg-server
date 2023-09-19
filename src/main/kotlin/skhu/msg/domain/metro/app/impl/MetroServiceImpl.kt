@@ -21,7 +21,11 @@ class MetroServiceImpl(
 
     override fun getArrivingTrainsForStation(stationName: String, subwayLine: String): List<ResponseArrivalTrain> {
         val jsonObject = openApiConnector.getRealTimeArrivalTrains(stationName)
-        val jsonArray = jsonObject.getJSONArray("realtimeArrivalList")
+        val jsonArray = try {
+            jsonObject.getJSONArray("realtimeArrivalList")
+        } catch (e: Exception) {
+            throw GlobalException(ErrorCode.NOT_FOUND_ARRIVAL_TRAIN)
+        }
         val responseArrivalTrainList = mutableListOf<ResponseArrivalTrain>()
 
         for (i in 0 until jsonArray.length()) {
@@ -152,7 +156,11 @@ class MetroServiceImpl(
     }
 
     private fun mapToResponseTransitPathAndAddFastTransferCar(jsonObject: JSONObject): List<ResponseTransitPath> {
-        val itemList = jsonObject.getJSONObject("msgBody").getJSONArray("itemList")
+        val itemList = try {
+            jsonObject.getJSONObject("msgBody").getJSONArray("itemList")
+        } catch (e: Exception) {
+            throw GlobalException(ErrorCode.NOT_FOUND_TRANSIT_PATH)
+        }
 
         return itemList.map { item ->
             val pathObj = item as JSONObject

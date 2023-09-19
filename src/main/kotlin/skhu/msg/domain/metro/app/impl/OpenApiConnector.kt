@@ -35,8 +35,6 @@ class OpenApiConnector(
 
         val response = restTemplate.exchange(url, HttpMethod.GET, httpEntity, String::class.java)
 
-        print("\n\n\n\n\n\n\n\n\n\n\n\n$response\n\n\n\n\n\n\n\n\n\n\n\n")
-
         if (!response.statusCode.is2xxSuccessful) {
             throw GlobalException(ErrorCode.NOT_FOUND_CONGESTION)
         }
@@ -50,15 +48,7 @@ class OpenApiConnector(
 
         val url = "http://swopenapi.seoul.go.kr/api/subway/$SEOUL_API_KEY/json/realtimeStationArrival/0/15/$stationName"
 
-        val httpEntity = HttpEntity<String>(
-            HttpHeaders().apply {
-                set("accept", "application/json")
-                set("Content-Type", "application/x-www-form-urlencoded;charset=utf-8")
-            })
-
-        val response = restTemplate.exchange(url, HttpMethod.GET, httpEntity, String::class.java)
-
-        print("\n\n\n\n\n\n\n\n\n\n\n\n$response\n\n\n\n\n\n\n\n\n\n\n\n")
+        val response = restTemplate.getForEntity(url, String::class.java)
 
         if (!response.statusCode.is2xxSuccessful) {
             throw GlobalException(ErrorCode.INTERNAL_SERVER_ERROR)
@@ -78,15 +68,7 @@ class OpenApiConnector(
         val url = "http://ws.bus.go.kr/api/rest/pathinfo/getPathInfoBySubway?serviceKey=$PATH_API_KEY&startX=$startX&startY=$startY&endX=$endX&endY=$endY&resultType=json"
         val accessUrl = URL(url).toURI()
 
-        val httpEntity = HttpEntity<String>(
-            HttpHeaders().apply {
-                set("accept", "application/json")
-                set("Content-Type", "application/json")
-            })
-
-        val response = restTemplate.exchange(accessUrl, HttpMethod.GET, httpEntity, String::class.java)
-
-        print("\n\n\n\n\n\n\n\n\n\n\n\n$response\n\n\n\n\n\n\n\n\n\n\n\n")
+        val response = restTemplate.getForEntity(accessUrl, String::class.java)
 
         if (!response.statusCode.is2xxSuccessful) {
             throw GlobalException(ErrorCode.INTERNAL_SERVER_ERROR)
