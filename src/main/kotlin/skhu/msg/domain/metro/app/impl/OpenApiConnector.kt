@@ -35,6 +35,8 @@ class OpenApiConnector(
 
         val response = restTemplate.exchange(url, HttpMethod.GET, httpEntity, String::class.java)
 
+        print("\n\n\n\n\n\n\n\n\n\n\n\n$response\n\n\n\n\n\n\n\n\n\n\n\n")
+
         if (!response.statusCode.is2xxSuccessful) {
             throw GlobalException(ErrorCode.NOT_FOUND_CONGESTION)
         }
@@ -55,6 +57,8 @@ class OpenApiConnector(
             })
 
         val response = restTemplate.exchange(url, HttpMethod.GET, httpEntity, String::class.java)
+
+        print("\n\n\n\n\n\n\n\n\n\n\n\n$response\n\n\n\n\n\n\n\n\n\n\n\n")
 
         if (!response.statusCode.is2xxSuccessful) {
             throw GlobalException(ErrorCode.INTERNAL_SERVER_ERROR)
@@ -81,6 +85,8 @@ class OpenApiConnector(
             })
 
         val response = restTemplate.exchange(accessUrl, HttpMethod.GET, httpEntity, String::class.java)
+
+        print("\n\n\n\n\n\n\n\n\n\n\n\n$response\n\n\n\n\n\n\n\n\n\n\n\n")
 
         if (!response.statusCode.is2xxSuccessful) {
             throw GlobalException(ErrorCode.INTERNAL_SERVER_ERROR)

@@ -26,6 +26,7 @@ class SecurityConfig (
             .httpBasic { httpBasic -> httpBasic.disable() }
             .csrf { csrf -> csrf.disable() }
             .sessionManagement { sessionManagement -> sessionManagement.disable() }
+            .formLogin { formLogin -> formLogin.disable() }
             .logout { logout -> logout.disable() }
             .authorizeHttpRequests { authorizeRequests ->
                 authorizeRequests
